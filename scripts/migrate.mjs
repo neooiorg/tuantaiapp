@@ -1,5 +1,5 @@
-// Applies drizzle migrations at container start (production).
-// Uses drizzle-orm's migrator + pg (both production deps) so it works without drizzle-kit.
+// Applies drizzle migrations at container start (production), then optionally
+// promotes a bootstrap admin. Uses drizzle-orm's migrator + pg (production deps).
 import { drizzle } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import pg from "pg";
@@ -20,5 +20,17 @@ const pool = new pg.Pool({
 
 const db = drizzle(pool);
 await migrate(db, { migrationsFolder: "./drizzle" });
-await pool.end();
 console.log("[migrate] migrations applied");
+
+// Bootstrap admin: promote a known email to admin (idempotent, only if the user exists).
+const adminEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
+if (adminEmail) {
+  const res = await pool.query(
+    `UPDATE "user" SET role = 'admin', "emailVerified" = true
+     WHERE email = $1 AND role IS DISTINCT FROM 'admin'`,
+    [adminEmail],
+  );
+  console.log(`[migrate] bootstrap admin ${adminEmail}: ${res.rowCount} row(s) updated`);
+}
+
+await pool.end();
