@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   title: "Tổng quan",
 };
 
+export const dynamic = "force-dynamic";
+
 function StatCard({
   title,
   value,

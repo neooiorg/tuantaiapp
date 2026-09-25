@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   title: "Danh sách lead",
 };
 
+export const dynamic = "force-dynamic";
+
 const headCellClass =
   "px-6 py-2.5 text-xs leading-4 font-semibold text-text-secondary whitespace-nowrap";
 const bodyCellClass =

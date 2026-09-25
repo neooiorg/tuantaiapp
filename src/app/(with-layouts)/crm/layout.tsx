@@ -1,6 +1,10 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/server/auth/session";
 
+// CRM pages read the DB and session per request — never prerender them at build time
+// (the internal Postgres host only resolves at runtime).
+export const dynamic = "force-dynamic";
+
 export default async function CrmLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");

@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   title: "Chi tiết lead",
 };
 
+export const dynamic = "force-dynamic";
+
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
