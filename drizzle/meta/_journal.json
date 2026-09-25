@@ -8,6 +8,13 @@
       "when": 1790211648927,
       "tag": "0000_magenta_dreaming_celestial",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790316372614,
+      "tag": "0001_serious_star_brand",
+      "breakpoints": true
     }
   ]
 }

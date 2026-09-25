@@ -23,6 +23,12 @@ export const user = pgTable("user", {
   banned: boolean("banned"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
+  // Extended profile fields (managed directly, not through BetterAuth).
+  phone: text("phone"),
+  website: text("website"),
+  address: text("address"),
+  country: text("country"),
+  bio: text("bio"),
 });
 
 export const session = pgTable("session", {
