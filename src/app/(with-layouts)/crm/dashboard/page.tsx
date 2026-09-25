@@ -6,7 +6,7 @@ import { cn } from "@/utils/cn";
 import { getDashboardStats } from "@/server/lead/dashboard";
 import { LeadsTrendChart } from "./_components/leads-trend-chart";
 import { RevenueDummyChart } from "./_components/revenue-dummy-chart";
-import { SourceDonut } from "./_components/source-donut";
+import { SalesDonut } from "./_components/sales-donut";
 import { StatusBarChart } from "./_components/status-bar-chart";
 
 export const metadata: Metadata = {
@@ -91,7 +91,7 @@ export default async function CrmDashboardPage() {
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <StatusBarChart data={stats.statusCounts} />
-          <SourceDonut data={stats.sourceCounts} />
+          <SalesDonut data={stats.bySales} />
         </div>
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">

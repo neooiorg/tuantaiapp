@@ -1,7 +1,6 @@
 import {
   AlphabetIcon,
   HomeIcon,
-  LetterIcon,
   PieChartIcon,
   TableIcon,
   UserGroupIcon,
@@ -18,12 +17,6 @@ export const NAV_DATA = [
         title: "Tổng quan",
         url: "/crm/dashboard",
         icon: <HomeIcon />,
-        items: [],
-      },
-      {
-        title: "Lead Inbox",
-        url: "/crm/lead-inbox",
-        icon: <LetterIcon />,
         items: [],
       },
       {

@@ -55,7 +55,7 @@ export default async function LeadsPage({
         <Breadcrumbs
           dividerType="chevron"
           items={[
-            { href: "/crm/lead-inbox", label: "CRM" },
+            { href: "/crm/dashboard", label: "CRM" },
             { href: "/crm/leads", label: "Danh sách lead" },
           ]}
         />

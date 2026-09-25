@@ -15,6 +15,13 @@
       "when": 1790316372614,
       "tag": "0001_serious_star_brand",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790320278184,
+      "tag": "0002_nosy_micromacro",
+      "breakpoints": true
     }
   ]
 }

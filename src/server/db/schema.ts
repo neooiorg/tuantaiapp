@@ -149,6 +149,21 @@ export const leadStatusHistory = pgTable("lead_status_history", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+// ---- Notification ----------------------------------------------------------
+
+export const notification = pgTable("notification", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  title: text("title").notNull(),
+  body: text("body"),
+  linkUrl: text("link_url"),
+  readAt: timestamp("read_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 // ---- Inferred types --------------------------------------------------------
 
 export type LeadStatus = (typeof leadStatusEnum.enumValues)[number];
@@ -165,3 +180,4 @@ export type SurveyResult = typeof surveyResult.$inferSelect;
 export type DesignTask = typeof designTask.$inferSelect;
 export type DesignVersion = typeof designVersion.$inferSelect;
 export type LeadStatusHistory = typeof leadStatusHistory.$inferSelect;
+export type Notification = typeof notification.$inferSelect;

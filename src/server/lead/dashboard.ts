@@ -1,6 +1,7 @@
-import { count, gte, sql } from "drizzle-orm";
+import { count, eq, gte, sql } from "drizzle-orm";
 import { LEAD_STATUS_ORDER, STATUS_LABELS } from "@/lib/lead-status";
 import { db } from "@/server/db";
+import { user } from "@/server/db/auth-schema";
 import { deposit, lead } from "@/server/db/schema";
 
 export type DashboardStats = Awaited<ReturnType<typeof getDashboardStats>>;
@@ -23,15 +24,15 @@ export async function getDashboardStats() {
   const completed = statusMap.get("COMPLETED") ?? 0;
   const inProgress = total - newCount - completed;
 
-  const sourceRows = await db
-    .select({ source: lead.source, n: count() })
+  // Leads grouped by the assigned salesperson (intake is fully manual now).
+  const salesRows = await db
+    .select({ name: user.name, n: count() })
     .from(lead)
-    .groupBy(lead.source);
-  const sourceMap = new Map(sourceRows.map((r) => [r.source, Number(r.n)]));
-  const sourceCounts = {
-    facebook: sourceMap.get("facebook") ?? 0,
-    manual: sourceMap.get("manual") ?? 0,
-  };
+    .leftJoin(user, eq(lead.assignedSalesId, user.id))
+    .groupBy(user.name);
+  const bySales = salesRows
+    .map((r) => ({ name: r.name ?? "Chưa gán", count: Number(r.n) }))
+    .sort((a, b) => b.count - a.count);
 
   const [dep] = await db
     .select({ sum: sql<string>`coalesce(sum(${deposit.amount}), 0)` })
@@ -72,7 +73,7 @@ export async function getDashboardStats() {
     completed,
     depositTotal,
     statusCounts,
-    sourceCounts,
+    bySales,
     leadsPerDay,
   };
 }

@@ -21,3 +21,17 @@ export function formatVnd(value: number | string): string {
   if (Number.isNaN(n)) return "0 ₫";
   return new Intl.NumberFormat("vi-VN").format(n) + " ₫";
 }
+
+// Short Vietnamese relative time, e.g. "5 phút trước", "2 giờ trước".
+export function timeAgo(value: Date | string): string {
+  const then = new Date(value).getTime();
+  const diffSec = Math.round((Date.now() - then) / 1000);
+  if (diffSec < 60) return "Vừa xong";
+  const diffMin = Math.round(diffSec / 60);
+  if (diffMin < 60) return `${diffMin} phút trước`;
+  const diffHour = Math.round(diffMin / 60);
+  if (diffHour < 24) return `${diffHour} giờ trước`;
+  const diffDay = Math.round(diffHour / 24);
+  if (diffDay < 7) return `${diffDay} ngày trước`;
+  return formatDate(value);
+}

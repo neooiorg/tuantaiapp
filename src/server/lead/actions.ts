@@ -59,7 +59,6 @@ export async function createLeadAction(input: CreateLeadInput): Promise<CreateLe
     });
 
     revalidatePath("/crm/leads");
-    revalidatePath("/crm/lead-inbox");
     return { ok: true, id: created.id };
   } catch (err) {
     if (err instanceof Error && (err.message === "UNAUTHENTICATED" || err.message === "NO_ROLE")) {
@@ -75,7 +74,6 @@ async function runTransition(leadId: string, to: LeadStatus, note?: string): Pro
     const user = await requireUser();
     await transitionLead({ leadId, to, note }, { id: user.id, role: user.role });
 
-    revalidatePath("/crm/lead-inbox");
     revalidatePath("/crm/leads");
     revalidatePath(`/crm/leads/${leadId}`);
     return { ok: true };
@@ -87,10 +85,6 @@ async function runTransition(leadId: string, to: LeadStatus, note?: string): Pro
     console.error("[transition] unexpected error", err);
     return { ok: false, error: "Có lỗi xảy ra, vui lòng thử lại." };
   }
-}
-
-export async function claimLeadAction(leadId: string): Promise<ActionResult> {
-  return runTransition(leadId, "CLAIMED");
 }
 
 export async function transitionLeadAction(

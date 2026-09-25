@@ -14,11 +14,6 @@ import {
   surveyResult,
 } from "@/server/db/schema";
 
-// Leads waiting to be claimed.
-export async function getInboxLeads() {
-  return db.select().from(lead).where(eq(lead.status, "NEW")).orderBy(desc(lead.createdAt));
-}
-
 // Full lead list with optional status filter and name/phone search.
 export async function listLeads(params: { status?: LeadStatus; q?: string }) {
   const conditions = [];

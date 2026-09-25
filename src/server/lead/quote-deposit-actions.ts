@@ -2,11 +2,11 @@
 
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { formatVnd } from "@/lib/format";
 import { requireUser } from "@/server/auth/session";
 import { db } from "@/server/db";
-import { user } from "@/server/db/auth-schema";
 import { deposit, lead, quote, quoteItem } from "@/server/db/schema";
-import { sendQuoteCreatedToAdmins } from "@/server/email/resend";
+import { notifyAdmins } from "@/server/notification/service";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -74,26 +74,19 @@ export async function createQuoteAction(
       })),
     );
 
-    // Notify admins of the new quote (total + line items). Non-fatal.
+    // Notify admins of the new quote via in-app notifications. Non-fatal.
     try {
-      const admins = await db
-        .select({ email: user.email })
-        .from(user)
-        .where(eq(user.role, "admin"));
-      await sendQuoteCreatedToAdmins(
-        admins.map((a) => a.email),
+      await notifyAdmins(
         {
-          leadId,
-          leadName: leadRow.name,
-          leadPhone: leadRow.phone,
-          salesName: actor.name,
-          total,
-          note: note?.trim() || null,
-          items: validItems,
+          type: "quote_created",
+          title: `Báo giá mới: ${leadRow.name}`,
+          body: `${actor.name} vừa tạo báo giá ${formatVnd(total)} cho ${leadRow.name} (${leadRow.phone}).`,
+          linkUrl: `/crm/leads/${leadId}`,
         },
+        actor.id,
       );
-    } catch (mailErr) {
-      console.error("[quote] admin notify failed (non-fatal):", mailErr);
+    } catch (notifyErr) {
+      console.error("[quote] admin notify failed (non-fatal):", notifyErr);
     }
 
     revalidatePath(`/crm/leads/${leadId}`);

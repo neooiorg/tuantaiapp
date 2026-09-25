@@ -45,7 +45,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
         <Breadcrumbs
           dividerType="chevron"
           items={[
-            { href: "/crm/lead-inbox", label: "CRM" },
+            { href: "/crm/dashboard", label: "CRM" },
             { href: "/crm/leads", label: "Danh sách lead" },
             { href: `/crm/leads/${lead.id}`, label: "Chi tiết" },
           ]}
