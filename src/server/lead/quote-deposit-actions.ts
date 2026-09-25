@@ -4,7 +4,9 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/server/auth/session";
 import { db } from "@/server/db";
+import { user } from "@/server/db/auth-schema";
 import { deposit, lead, quote, quoteItem } from "@/server/db/schema";
+import { sendQuoteCreatedToAdmins } from "@/server/email/resend";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -42,7 +44,7 @@ export async function createQuoteAction(
   note?: string,
 ): Promise<ActionResult> {
   try {
-    await requireLeadManager(leadId);
+    const { user: actor, lead: leadRow } = await requireLeadManager(leadId);
 
     const validItems = items
       .map((it) => ({
@@ -71,6 +73,28 @@ export async function createQuoteAction(
         unitPrice: it.unitPrice.toFixed(2),
       })),
     );
+
+    // Notify admins of the new quote (total + line items). Non-fatal.
+    try {
+      const admins = await db
+        .select({ email: user.email })
+        .from(user)
+        .where(eq(user.role, "admin"));
+      await sendQuoteCreatedToAdmins(
+        admins.map((a) => a.email),
+        {
+          leadId,
+          leadName: leadRow.name,
+          leadPhone: leadRow.phone,
+          salesName: actor.name,
+          total,
+          note: note?.trim() || null,
+          items: validItems,
+        },
+      );
+    } catch (mailErr) {
+      console.error("[quote] admin notify failed (non-fatal):", mailErr);
+    }
 
     revalidatePath(`/crm/leads/${leadId}`);
     return { ok: true };

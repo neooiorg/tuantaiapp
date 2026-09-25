@@ -13,7 +13,9 @@ import {
 } from "@/components/tailgrids/core/table";
 import { formatDateTime } from "@/lib/format";
 import { LEAD_STATUS_ORDER, type LeadStatus } from "@/lib/lead-status";
+import { getCurrentUser } from "@/server/auth/session";
 import { listLeads } from "@/server/lead/queries";
+import { AddLeadButton } from "./_components/add-lead-button";
 import { LeadsFilter } from "./_components/leads-filter";
 
 export const metadata: Metadata = {
@@ -40,7 +42,11 @@ export default async function LeadsPage({
 }) {
   const { status, q } = await searchParams;
   const parsedStatus = parseStatus(status);
-  const leads = await listLeads({ status: parsedStatus, q });
+  const [leads, user] = await Promise.all([
+    listLeads({ status: parsedStatus, q }),
+    getCurrentUser(),
+  ]);
+  const canCreate = user?.role === "sales" || user?.role === "admin";
 
   return (
     <div className="mt-6 space-y-5">
@@ -54,6 +60,12 @@ export default async function LeadsPage({
           ]}
         />
       </div>
+
+      {canCreate && (
+        <div className="flex justify-end px-2 lg:px-5">
+          <AddLeadButton />
+        </div>
+      )}
 
       <div className="space-y-4 px-2 lg:px-5">
         <LeadsFilter status={parsedStatus} q={q} />
