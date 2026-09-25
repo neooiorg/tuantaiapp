@@ -1,7 +1,14 @@
 // Seed dummy leads (+ some quotes/deposits) for demo/testing.
 // Idempotent: all seeded leads use an "@seed.local" email and are deleted first.
-// Run: node scripts/seed-leads.mjs   (reads DATABASE_URL from .env)
-import "dotenv/config";
+// Run: node scripts/seed-leads.mjs   (reads DATABASE_URL from .env locally, or
+// from the container env when run via Dokploy terminal).
+// dotenv is a devDependency and may be absent in the production container — load it
+// only if available; the container already provides DATABASE_URL in its env.
+try {
+  await import("dotenv/config");
+} catch {
+  // no dotenv in this environment — rely on process.env directly
+}
 import pg from "pg";
 
 const connectionString = process.env.DATABASE_URL;
