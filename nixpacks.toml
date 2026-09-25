@@ -1,0 +1,3 @@
+# Run DB migrations before starting the Next.js server.
+[start]
+cmd = "node scripts/migrate.mjs && npm run start"
