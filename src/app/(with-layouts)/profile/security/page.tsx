@@ -32,7 +32,7 @@ export default function SecurityTabContent() {
 
   return (
     <div>
-      <h2 className="text-xl leading-7 font-semibold text-text-primary">Security</h2>
+      <h2 className="text-xl leading-7 font-semibold text-text-primary">Bảo mật</h2>
 
       <div className="mt-6 space-y-2 divide-y divide-card-border">
         {securityItems.map(({ icon: Icon, title, description, actionLabel }) => (
@@ -56,7 +56,7 @@ export default function SecurityTabContent() {
               variant="ghost"
               size="sm"
               className="h-auto shrink-0 rounded-none py-2 pr-0 text-base text-brand-500 hover:bg-transparent hover:text-brand-600 focus:ring-0"
-              onClick={() => actionLabel.toLowerCase() === "change" && setOpenPasswordDialog(true)}
+              onClick={() => actionLabel === "Đổi" && setOpenPasswordDialog(true)}
             >
               {actionLabel}
             </Button>
@@ -74,20 +74,20 @@ export default function SecurityTabContent() {
               }}
             >
               <DialogHeader className="gap-1 border-b border-card-border py-4 pr-14 pl-5">
-                <DialogTitle className="text-xl leading-7">Update Password</DialogTitle>
+                <DialogTitle className="text-xl leading-7">Cập nhật mật khẩu</DialogTitle>
                 <DialogDescription className="text-text-tertiary">
-                  Create a secure password to keep your account safe
+                  Tạo mật khẩu an toàn để bảo vệ tài khoản của bạn
                 </DialogDescription>
               </DialogHeader>
 
               <DialogBody className="space-y-4 px-5 py-4">
                 <TextField className="gap-1.5">
-                  <Label htmlFor="current-password">Current Password</Label>
+                  <Label htmlFor="current-password">Mật khẩu hiện tại</Label>
                   <InputGroup>
                     <InputGroupInput
                       id="current-password"
                       type={showCurrentPassword ? "text" : "password"}
-                      placeholder="Enter your current password"
+                      placeholder="Nhập mật khẩu hiện tại"
                       autoComplete="current-password"
                       required
                     />
@@ -95,7 +95,7 @@ export default function SecurityTabContent() {
                       size="icon-sm"
                       className="mr-1"
                       onPress={() => setShowCurrentPassword(!showCurrentPassword)}
-                      aria-label={showCurrentPassword ? "Hide password" : "Show password"}
+                      aria-label={showCurrentPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                     >
                       {showCurrentPassword ? (
                         <EyeDisabled className="size-5" />
@@ -107,12 +107,12 @@ export default function SecurityTabContent() {
                 </TextField>
 
                 <TextField className="gap-1.5">
-                  <Label htmlFor="new-password">New Password</Label>
+                  <Label htmlFor="new-password">Mật khẩu mới</Label>
                   <InputGroup>
                     <InputGroupInput
                       id="new-password"
                       type={showNewPassword ? "text" : "password"}
-                      placeholder="Choose a new password"
+                      placeholder="Chọn mật khẩu mới"
                       minLength={8}
                       autoComplete="new-password"
                       required
@@ -121,7 +121,7 @@ export default function SecurityTabContent() {
                       size="icon-sm"
                       className="mr-1"
                       onPress={() => setShowNewPassword(!showNewPassword)}
-                      aria-label={showNewPassword ? "Hide password" : "Show password"}
+                      aria-label={showNewPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                     >
                       {showNewPassword ? (
                         <EyeDisabled className="size-5" />
@@ -134,12 +134,12 @@ export default function SecurityTabContent() {
                 </TextField>
 
                 <TextField className="gap-1.5">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
+                  <Label htmlFor="confirm-password">Xác nhận mật khẩu mới</Label>
                   <InputGroup>
                     <InputGroupInput
                       id="confirm-password"
                       type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Re-enter your new password"
+                      placeholder="Nhập lại mật khẩu mới"
                       minLength={8}
                       autoComplete="new-password"
                       required
@@ -148,7 +148,7 @@ export default function SecurityTabContent() {
                       size="icon-sm"
                       className="mr-1"
                       onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      aria-label={showConfirmPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
                     >
                       {showConfirmPassword ? (
                         <EyeDisabled className="size-5" />
@@ -171,10 +171,10 @@ export default function SecurityTabContent() {
                     }),
                   )}
                 >
-                  Cancel
+                  Huỷ
                 </DialogClose>
                 <Button type="submit" size="lg" className="px-3.5 text-sm">
-                  Apply Changes
+                  Áp dụng
                 </Button>
               </DialogFooter>
             </Form>

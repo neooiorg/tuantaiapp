@@ -32,12 +32,12 @@ import { Form } from "react-aria-components";
 import { LogoutIcon, TrashIcon } from "../icons";
 
 const countryOptions = [
-  { value: "us", label: "United States", flag: "/images/flag/US.svg" },
+  { value: "us", label: "Hoa Kỳ", flag: "/images/flag/US.svg" },
   { value: "ca", label: "Canada", flag: "/images/flag/CA.svg" },
-  { value: "fr", label: "France", flag: "/images/flag/FR.svg" },
-  { value: "au", label: "Australia", flag: "/images/flag/AU.svg" },
-  { value: "it", label: "Italy", flag: "/images/flag/IT.svg" },
-  { value: "in", label: "India", flag: "/images/flag/IN.svg" },
+  { value: "fr", label: "Pháp", flag: "/images/flag/FR.svg" },
+  { value: "au", label: "Úc", flag: "/images/flag/AU.svg" },
+  { value: "it", label: "Ý", flag: "/images/flag/IT.svg" },
+  { value: "in", label: "Ấn Độ", flag: "/images/flag/IN.svg" },
 ];
 
 // Website is stored with the leading protocol stripped (the addon shows "https://").
@@ -113,7 +113,7 @@ export function AccountForm({ profile }: { profile: Profile }) {
     <div className="space-y-6">
       {/* Account Details Card */}
       <Card className="bg-transparent p-5">
-        <h2 className="mb-6 text-xl leading-7 font-semibold text-text-primary">Account Details</h2>
+        <h2 className="mb-6 text-xl leading-7 font-semibold text-text-primary">Thông tin tài khoản</h2>
 
         <Form
           className="space-y-6"
@@ -138,7 +138,7 @@ export function AccountForm({ profile }: { profile: Profile }) {
                   isDisabled={!image || pending}
                   onPress={() => setImage(null)}
                 >
-                  Remove
+                  Xoá ảnh
                 </Button>
               </div>
               <p className="text-xs leading-4 text-text-tertiary">
@@ -149,17 +149,17 @@ export function AccountForm({ profile }: { profile: Profile }) {
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
             <TextField value={fullName} onChange={setFullName} className="w-full gap-2.5" required>
-              <Label>Full Name</Label>
+              <Label>Họ và tên</Label>
               <Input name="fullName" placeholder="Nguyễn Văn A" className="w-full" />
             </TextField>
 
             <TextField value={profile.email} type="email" disabled className="w-full gap-2.5">
-              <Label>Email address</Label>
+              <Label>Địa chỉ email</Label>
               <Input name="email" className="w-full" />
             </TextField>
 
             <TextField value={phone} onChange={setPhone} className="w-full gap-2.5">
-              <Label>Phone Number</Label>
+              <Label>Số điện thoại</Label>
               <Input name="phone" placeholder="+84 90 123 4567" className="w-full" />
             </TextField>
 
@@ -174,7 +174,7 @@ export function AccountForm({ profile }: { profile: Profile }) {
             </TextField>
 
             <TextField value={address} onChange={setAddress} className="w-full gap-2.5">
-              <Label>Address</Label>
+              <Label>Địa chỉ</Label>
               <Input name="address" placeholder="Số nhà, đường, phường, quận" className="w-full" />
             </TextField>
 
@@ -183,9 +183,10 @@ export function AccountForm({ profile }: { profile: Profile }) {
                 name="country"
                 value={country || undefined}
                 onChange={(key) => setCountry((key as string) ?? "")}
+                placeholder="Chọn quốc gia"
                 className="h-full"
               >
-                <SelectLabel>Country</SelectLabel>
+                <SelectLabel>Quốc gia</SelectLabel>
                 <SelectTrigger className="h-full w-full border-input-border">
                   <SelectValue className="flex items-center gap-2" />
                   <SelectIndicator />
@@ -214,7 +215,7 @@ export function AccountForm({ profile }: { profile: Profile }) {
               onChange={setBio}
               className="col-span-1 w-full gap-2.5 md:col-span-2"
             >
-              <Label>Bio</Label>
+              <Label>Giới thiệu</Label>
               <TextArea name="bio" className="h-25 shadow-xs" placeholder="Giới thiệu ngắn về bạn." />
             </TextField>
 
@@ -228,7 +229,7 @@ export function AccountForm({ profile }: { profile: Profile }) {
                 isDisabled={pending}
                 onPress={reset}
               >
-                Cancel
+                Huỷ
               </Button>
               <Button
                 variant="primary"
@@ -237,7 +238,7 @@ export function AccountForm({ profile }: { profile: Profile }) {
                 className="px-3.5 text-sm"
                 isDisabled={pending}
               >
-                {pending ? "Đang lưu..." : "Save Changes"}
+                {pending ? "Đang lưu..." : "Lưu thay đổi"}
               </Button>
             </div>
           </div>
@@ -249,10 +250,10 @@ export function AccountForm({ profile }: { profile: Profile }) {
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <p className="mb-1 text-sm leading-5 font-medium text-text-primary">
-              Sign out from all devices
+              Đăng xuất khỏi tất cả thiết bị
             </p>
             <p className="text-xs leading-4 text-text-tertiary">
-              End all active sessions across your devices.
+              Kết thúc mọi phiên đăng nhập trên các thiết bị của bạn.
             </p>
           </div>
 
@@ -266,16 +267,16 @@ export function AccountForm({ profile }: { profile: Profile }) {
             onPress={signOutAll}
           >
             <LogoutIcon />
-            {signingOut ? "Đang đăng xuất..." : "Sign Out"}
+            {signingOut ? "Đang đăng xuất..." : "Đăng xuất"}
           </Button>
         </div>
         <hr className="my-4 border-border-secondary-alt" />
         {/* Delete Account */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <p className="mb-1 text-sm leading-5 font-medium text-text-primary">Delete Account</p>
+            <p className="mb-1 text-sm leading-5 font-medium text-text-primary">Xoá tài khoản</p>
             <p className="text-xs leading-4 text-text-tertiary">
-              Delete your account permanently along with all associated data.
+              Xoá vĩnh viễn tài khoản của bạn cùng toàn bộ dữ liệu liên quan.
             </p>
           </div>
 
@@ -288,7 +289,7 @@ export function AccountForm({ profile }: { profile: Profile }) {
             onPress={() => toast.info("Vui lòng liên hệ quản trị viên để xoá tài khoản.")}
           >
             <TrashIcon />
-            Delete Account
+            Xoá tài khoản
           </Button>
         </div>
       </Card>

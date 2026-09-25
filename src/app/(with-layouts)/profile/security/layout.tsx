@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Security Page',
+    title: 'Bảo mật',
 };
 
 export default function SecurityPageLayout({

@@ -4,28 +4,28 @@ import { Metadata } from 'next';
 const notificationSettings = [
     {
         id: 'email-notification',
-        label: 'Email notification',
+        label: 'Thông báo qua email',
         defaultChecked: true,
     },
     {
         id: 'push-notification',
-        label: 'Push Notification',
+        label: 'Thông báo đẩy',
         defaultChecked: false,
     },
-    { id: 'product-update', label: 'Product Update', defaultChecked: true },
-    { id: 'marketing-email', label: 'Marketing Email', defaultChecked: false },
-    { id: 'security-alert', label: 'Security Alert', defaultChecked: true },
+    { id: 'product-update', label: 'Cập nhật sản phẩm', defaultChecked: true },
+    { id: 'marketing-email', label: 'Email tiếp thị', defaultChecked: false },
+    { id: 'security-alert', label: 'Cảnh báo bảo mật', defaultChecked: true },
 ] as const;
 
 export const metadata: Metadata = {
-    title: 'Notification Page',
+    title: 'Thông báo',
 };
 
 export default function NotificationPage() {
     return (
         <div>
             <h2 className='mb-6 text-xl leading-7 font-semibold text-text-primary'>
-                Notification
+                Thông báo
             </h2>
 
             <div className='divide-y divide-border-secondary-alt'>

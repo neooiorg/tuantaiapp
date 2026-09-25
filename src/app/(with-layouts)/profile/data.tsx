@@ -4,19 +4,19 @@ export const tabsItems = [
   {
     href: "/profile/account",
     icon: <UserIcon />,
-    title: "Account",
-    description: "Manage your personal data",
+    title: "Tài khoản",
+    description: "Quản lý thông tin cá nhân của bạn",
   },
   {
     href: "/profile/security",
     icon: <ShieldCheckIcon />,
-    title: "Security",
-    description: "Set your password, authentication & etc",
+    title: "Bảo mật",
+    description: "Thiết lập mật khẩu, xác thực & khác",
   },
   {
     href: "/profile/notification",
     icon: <BellIcon />,
-    title: "Notification",
-    description: "Customize your notification preferences",
+    title: "Thông báo",
+    description: "Tuỳ chỉnh các thiết lập thông báo",
   },
 ];

@@ -3,26 +3,26 @@ import { ClockCircleIcon, DisplayIcon, LockIcon, ShieldCheckIcon } from "./icons
 export const securityItems = [
   {
     icon: LockIcon,
-    title: "Current Password",
-    description: "Change your account password to keep your profile secure",
-    actionLabel: "Change",
+    title: "Mật khẩu hiện tại",
+    description: "Đổi mật khẩu tài khoản để giữ hồ sơ của bạn an toàn",
+    actionLabel: "Đổi",
   },
   {
     icon: ShieldCheckIcon,
-    title: "Two-Factor Authentication",
-    description: "Activate two-step verification for enhanced account protection",
-    actionLabel: "Enable",
+    title: "Xác thực hai lớp",
+    description: "Bật xác thực hai bước để tăng cường bảo vệ tài khoản",
+    actionLabel: "Bật",
   },
   {
     icon: DisplayIcon,
-    title: "Active Session",
-    description: "View and manage all your currently active login sessions",
-    actionLabel: "3 Activity",
+    title: "Phiên đang hoạt động",
+    description: "Xem và quản lý các phiên đăng nhập đang hoạt động",
+    actionLabel: "3 phiên",
   },
   {
     icon: ClockCircleIcon,
-    title: "Login Activity",
-    description: "Examine your recent login activity and access history",
-    actionLabel: "View History",
+    title: "Lịch sử đăng nhập",
+    description: "Xem lại hoạt động đăng nhập và lịch sử truy cập gần đây",
+    actionLabel: "Xem lịch sử",
   },
 ] as const;
