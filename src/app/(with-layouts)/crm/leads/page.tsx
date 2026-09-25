@@ -14,6 +14,7 @@ import {
 import { formatDateTime } from "@/lib/format";
 import { LEAD_STATUS_ORDER, type LeadStatus } from "@/lib/lead-status";
 import { getCurrentUser } from "@/server/auth/session";
+import { listAssignableUsers } from "@/server/members/queries";
 import { listLeads } from "@/server/lead/queries";
 import { AddLeadButton } from "./_components/add-lead-button";
 import { LeadsFilter } from "./_components/leads-filter";
@@ -38,13 +39,20 @@ function parseStatus(value?: string): LeadStatus | undefined {
 export default async function LeadsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; q?: string }>;
+  searchParams: Promise<{
+    status?: string;
+    q?: string;
+    salesId?: string;
+    from?: string;
+    to?: string;
+  }>;
 }) {
-  const { status, q } = await searchParams;
+  const { status, q, salesId, from, to } = await searchParams;
   const parsedStatus = parseStatus(status);
-  const [leads, user] = await Promise.all([
-    listLeads({ status: parsedStatus, q }),
+  const [leads, user, salesUsers] = await Promise.all([
+    listLeads({ status: parsedStatus, q, salesId, from, to }),
     getCurrentUser(),
+    listAssignableUsers(),
   ]);
   const canCreate = user?.role === "sales" || user?.role === "admin";
 
@@ -68,7 +76,14 @@ export default async function LeadsPage({
       )}
 
       <div className="space-y-4 px-2 lg:px-5">
-        <LeadsFilter status={parsedStatus} q={q} />
+        <LeadsFilter
+          status={parsedStatus}
+          q={q}
+          salesId={salesId}
+          from={from}
+          to={to}
+          salesUsers={salesUsers}
+        />
 
         <Card className="overflow-hidden p-0">
           <CardContent className="p-0">

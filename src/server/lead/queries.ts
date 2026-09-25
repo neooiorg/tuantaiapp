@@ -1,4 +1,4 @@
-import { and, desc, eq, getTableColumns, ilike, inArray, or } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, gte, ilike, inArray, isNull, lte, or } from "drizzle-orm";
 import type { LeadStatus } from "@/lib/lead-status";
 import { db } from "@/server/db";
 import { user } from "@/server/db/auth-schema";
@@ -14,13 +14,35 @@ import {
   surveyResult,
 } from "@/server/db/schema";
 
-// Full lead list with optional status filter and name/phone search.
-export async function listLeads(params: { status?: LeadStatus; q?: string }) {
+// Full lead list with optional filters: status, name/phone search, assigned
+// salesperson ("unassigned" for none), and a created-at date range (YYYY-MM-DD).
+export async function listLeads(params: {
+  status?: LeadStatus;
+  q?: string;
+  salesId?: string;
+  from?: string;
+  to?: string;
+}) {
   const conditions = [];
   if (params.status) conditions.push(eq(lead.status, params.status));
   if (params.q?.trim()) {
     const like = `%${params.q.trim()}%`;
     conditions.push(or(ilike(lead.name, like), ilike(lead.phone, like)));
+  }
+  if (params.salesId) {
+    conditions.push(
+      params.salesId === "unassigned"
+        ? isNull(lead.assignedSalesId)
+        : eq(lead.assignedSalesId, params.salesId),
+    );
+  }
+  if (params.from) {
+    const from = new Date(`${params.from}T00:00:00`);
+    if (!Number.isNaN(from.getTime())) conditions.push(gte(lead.createdAt, from));
+  }
+  if (params.to) {
+    const to = new Date(`${params.to}T23:59:59.999`);
+    if (!Number.isNaN(to.getTime())) conditions.push(lte(lead.createdAt, to));
   }
 
   return db

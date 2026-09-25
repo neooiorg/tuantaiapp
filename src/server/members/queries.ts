@@ -1,4 +1,4 @@
-import { desc } from "drizzle-orm";
+import { asc, desc, inArray } from "drizzle-orm";
 import { db } from "@/server/db";
 import { user } from "@/server/db/auth-schema";
 
@@ -17,3 +17,14 @@ export async function listMembers() {
 }
 
 export type Member = Awaited<ReturnType<typeof listMembers>>[number];
+
+// Users that can be assigned to a lead (for filter dropdowns): sales + admin.
+export async function listAssignableUsers() {
+  return db
+    .select({ id: user.id, name: user.name })
+    .from(user)
+    .where(inArray(user.role, ["sales", "admin"]))
+    .orderBy(asc(user.name));
+}
+
+export type AssignableUser = Awaited<ReturnType<typeof listAssignableUsers>>[number];
