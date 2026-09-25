@@ -23,14 +23,19 @@ await migrate(db, { migrationsFolder: "./drizzle" });
 console.log("[migrate] migrations applied");
 
 // Bootstrap admin: promote a known email to admin (idempotent, only if the user exists).
+// Non-fatal — a bootstrap issue must never stop the app from starting.
 const adminEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
 if (adminEmail) {
-  const res = await pool.query(
-    `UPDATE "user" SET role = 'admin', "emailVerified" = true
-     WHERE email = $1 AND role IS DISTINCT FROM 'admin'`,
-    [adminEmail],
-  );
-  console.log(`[migrate] bootstrap admin ${adminEmail}: ${res.rowCount} row(s) updated`);
+  try {
+    const res = await pool.query(
+      `UPDATE "user" SET role = 'admin', email_verified = true
+       WHERE email = $1 AND role IS DISTINCT FROM 'admin'`,
+      [adminEmail],
+    );
+    console.log(`[migrate] bootstrap admin ${adminEmail}: ${res.rowCount} row(s) updated`);
+  } catch (e) {
+    console.error("[migrate] bootstrap admin failed (non-fatal):", e.message);
+  }
 }
 
 await pool.end();
