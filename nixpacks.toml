@@ -1,3 +1,7 @@
+# Next.js 16 requires Node >= 20.9; pin Node 22.
+[variables]
+NIXPACKS_NODE_VERSION = "22"
+
 # Run DB migrations before starting the Next.js server.
 [start]
 cmd = "node scripts/migrate.mjs && npm run start"
