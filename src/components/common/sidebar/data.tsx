@@ -1,6 +1,7 @@
 import {
   AlphabetIcon,
   HomeIcon,
+  InvoiceIcon,
   PieChartIcon,
   TableIcon,
   UserGroupIcon,
@@ -23,6 +24,12 @@ export const NAV_DATA = [
         title: "Danh sách lead",
         url: "/crm/leads",
         icon: <UserGroupIcon />,
+        items: [],
+      },
+      {
+        title: "Báo cáo",
+        url: "/crm/reports",
+        icon: <InvoiceIcon />,
         items: [],
       },
       {
