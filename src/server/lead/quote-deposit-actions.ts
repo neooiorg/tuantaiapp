@@ -38,6 +38,20 @@ function toResult(err: unknown): ActionResult {
   return { ok: false, error: "Có lỗi xảy ra, vui lòng thử lại." };
 }
 
+// Normalize + validate raw quote item inputs. Returns null if none are valid.
+function normalizeItems(items: QuoteItemInput[]) {
+  const valid = items
+    .map((it) => ({
+      name: it.name.trim(),
+      quantity: Number(it.quantity),
+      unitPrice: Number(it.unitPrice),
+    }))
+    .filter((it) => it.name && it.quantity > 0 && it.unitPrice >= 0);
+  if (valid.length === 0) return null;
+  const total = valid.reduce((sum, it) => sum + it.quantity * it.unitPrice, 0);
+  return { valid, total };
+}
+
 export async function createQuoteAction(
   leadId: string,
   items: QuoteItemInput[],
@@ -46,19 +60,9 @@ export async function createQuoteAction(
   try {
     const { user: actor, lead: leadRow } = await requireLeadManager(leadId);
 
-    const validItems = items
-      .map((it) => ({
-        name: it.name.trim(),
-        quantity: Number(it.quantity),
-        unitPrice: Number(it.unitPrice),
-      }))
-      .filter((it) => it.name && it.quantity > 0 && it.unitPrice >= 0);
-
-    if (validItems.length === 0) {
-      return { ok: false, error: "Cần ít nhất một hạng mục hợp lệ." };
-    }
-
-    const total = validItems.reduce((sum, it) => sum + it.quantity * it.unitPrice, 0);
+    const normalized = normalizeItems(items);
+    if (!normalized) return { ok: false, error: "Cần ít nhất một hạng mục hợp lệ." };
+    const { valid: validItems, total } = normalized;
 
     const [created] = await db
       .insert(quote)
@@ -90,6 +94,69 @@ export async function createQuoteAction(
     }
 
     revalidatePath(`/crm/leads/${leadId}`);
+    return { ok: true };
+  } catch (err) {
+    return toResult(err);
+  }
+}
+
+export async function updateQuoteAction(
+  quoteId: string,
+  items: QuoteItemInput[],
+  note?: string,
+): Promise<ActionResult> {
+  try {
+    const [q] = await db
+      .select({ leadId: quote.leadId })
+      .from(quote)
+      .where(eq(quote.id, quoteId))
+      .limit(1);
+    if (!q) return { ok: false, error: "Không tìm thấy báo giá." };
+
+    await requireLeadManager(q.leadId);
+
+    const normalized = normalizeItems(items);
+    if (!normalized) return { ok: false, error: "Cần ít nhất một hạng mục hợp lệ." };
+    const { valid: validItems, total } = normalized;
+
+    await db
+      .update(quote)
+      .set({ total: total.toFixed(2), note: note?.trim() || null, updatedAt: new Date() })
+      .where(eq(quote.id, quoteId));
+
+    // Replace all line items with the edited set.
+    await db.delete(quoteItem).where(eq(quoteItem.quoteId, quoteId));
+    await db.insert(quoteItem).values(
+      validItems.map((it) => ({
+        quoteId,
+        name: it.name,
+        quantity: it.quantity.toString(),
+        unitPrice: it.unitPrice.toFixed(2),
+      })),
+    );
+
+    revalidatePath(`/crm/leads/${q.leadId}`);
+    return { ok: true };
+  } catch (err) {
+    return toResult(err);
+  }
+}
+
+export async function deleteQuoteAction(quoteId: string): Promise<ActionResult> {
+  try {
+    const [q] = await db
+      .select({ leadId: quote.leadId })
+      .from(quote)
+      .where(eq(quote.id, quoteId))
+      .limit(1);
+    if (!q) return { ok: false, error: "Không tìm thấy báo giá." };
+
+    await requireLeadManager(q.leadId);
+
+    // quote_item rows cascade-delete via the FK.
+    await db.delete(quote).where(eq(quote.id, quoteId));
+
+    revalidatePath(`/crm/leads/${q.leadId}`);
     return { ok: true };
   } catch (err) {
     return toResult(err);

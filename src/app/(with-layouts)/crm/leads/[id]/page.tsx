@@ -74,7 +74,13 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
           </CardHeader>
           <CardContent>
             {user?.role ? (
-              <TransitionActions leadId={lead.id} status={lead.status} role={user.role} />
+              <TransitionActions
+                leadId={lead.id}
+                status={lead.status}
+                role={user.role}
+                hasQuote={detail.quotes.length > 0}
+                hasDeposit={detail.deposits.length > 0}
+              />
             ) : (
               <p className="text-sm text-text-secondary">Bạn chưa được phân quyền.</p>
             )}

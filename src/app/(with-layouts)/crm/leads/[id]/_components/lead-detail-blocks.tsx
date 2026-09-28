@@ -1,22 +1,8 @@
-import { Badge } from "@/components/tailgrids/core/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/tailgrids/core/card";
 import { formatDate, formatDateTime, formatVnd } from "@/lib/format";
-import type { QuoteStatus } from "@/lib/lead-status";
 import type { LeadDetail } from "@/server/lead/queries";
 import { DepositForm } from "./deposit-form";
-import { QuoteForm } from "./quote-form";
-
-const QUOTE_STATUS_LABELS: Record<QuoteStatus, string> = {
-  draft: "Nháp",
-  sent: "Đã gửi",
-  accepted: "Đã duyệt",
-};
-
-const QUOTE_STATUS_COLOR: Record<QuoteStatus, "gray" | "sky" | "success"> = {
-  draft: "gray",
-  sent: "sky",
-  accepted: "success",
-};
+import { QuotesManager } from "./quotes-manager";
 
 function BlockCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -44,36 +30,7 @@ export function QuoteBlock({
 }) {
   return (
     <BlockCard title="Báo giá">
-      {quotes.length === 0 ? (
-        <Empty text="Chưa có báo giá." />
-      ) : (
-        <div className="flex flex-col gap-5">
-          {quotes.map((q) => (
-            <div key={q.id} className="flex flex-col gap-2 border-b border-card-border pb-4 last:border-0 last:pb-0">
-              <div className="flex items-center justify-between">
-                <Badge color={QUOTE_STATUS_COLOR[q.status]} size="md">
-                  {QUOTE_STATUS_LABELS[q.status]}
-                </Badge>
-                <span className="text-sm font-semibold text-text-primary">{formatVnd(q.total)}</span>
-              </div>
-              {q.items.length > 0 && (
-                <ul className="flex flex-col gap-1 text-sm text-text-primary">
-                  {q.items.map((it) => (
-                    <li key={it.id} className="flex justify-between gap-4">
-                      <span>
-                        {it.name} × {it.quantity}
-                      </span>
-                      <span className="text-text-secondary">{formatVnd(it.unitPrice)}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {q.note && <p className="text-sm text-text-secondary">{q.note}</p>}
-            </div>
-          ))}
-        </div>
-      )}
-      {canManage && <QuoteForm leadId={leadId} />}
+      <QuotesManager quotes={quotes} leadId={leadId} canManage={canManage} />
     </BlockCard>
   );
 }

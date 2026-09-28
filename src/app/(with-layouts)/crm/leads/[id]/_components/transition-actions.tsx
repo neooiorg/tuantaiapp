@@ -11,14 +11,29 @@ import { type LeadStatus } from "@/lib/lead-status";
 import { getAvailableTransitions, type AppRole } from "@/lib/permissions";
 import { transitionLeadAction } from "@/server/lead/actions";
 
+// Data preconditions the UI mirrors from the server state machine, so a button
+// is disabled (with a hint) instead of erroring only after being clicked.
+function precondition(
+  to: LeadStatus,
+  ctx: { hasQuote: boolean; hasDeposit: boolean },
+): string | null {
+  if (to === "QUOTED" && !ctx.hasQuote) return "Cần có ít nhất 1 báo giá trước khi chốt.";
+  if (to === "DEPOSITED" && !ctx.hasDeposit) return "Cần ghi nhận cọc trước khi xác nhận.";
+  return null;
+}
+
 export function TransitionActions({
   leadId,
   status,
   role,
+  hasQuote,
+  hasDeposit,
 }: {
   leadId: string;
   status: LeadStatus;
   role: AppRole;
+  hasQuote: boolean;
+  hasDeposit: boolean;
 }) {
   const router = useRouter();
   const [note, setNote] = useState("");
@@ -59,18 +74,23 @@ export function TransitionActions({
         </TextField>
       )}
       <div className="flex flex-wrap gap-3">
-        {transitions.map((t) => (
-          <Button
-            key={`${t.from}-${t.to}`}
-            variant={t.requiresNote ? "danger" : "primary"}
-            appearance="fill"
-            size="md"
-            isDisabled={pending}
-            onPress={() => run(t.to)}
-          >
-            {t.actionLabel}
-          </Button>
-        ))}
+        {transitions.map((t) => {
+          const blocked = precondition(t.to, { hasQuote, hasDeposit });
+          return (
+            <div key={`${t.from}-${t.to}`} className="flex flex-col gap-1">
+              <Button
+                variant={t.requiresNote ? "danger" : "primary"}
+                appearance="fill"
+                size="md"
+                isDisabled={pending || !!blocked}
+                onPress={() => run(t.to)}
+              >
+                {t.actionLabel}
+              </Button>
+              {blocked && <span className="text-xs text-text-tertiary">{blocked}</span>}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
