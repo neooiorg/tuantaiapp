@@ -56,7 +56,7 @@ export default async function CrmReportsPage() {
           <KpiCard
             title="Tỷ lệ chuyển đổi"
             value={`${stats.conversionRate}%`}
-            subtitle={`${stats.projectCount}/${stats.totalLeads} lead thành công trình`}
+            subtitle={`${stats.projectCount}/${stats.totalLeads} lead thành công`}
             icon={<UserGroupIcon />}
             iconClass="bg-brand-200 text-brand-600"
           />
