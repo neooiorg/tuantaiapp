@@ -1,7 +1,7 @@
-import { count, countDistinct, eq, gte, inArray, sql } from "drizzle-orm";
+import { count, countDistinct, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { db } from "@/server/db";
 import { user } from "@/server/db/auth-schema";
-import { deposit, lead, quote } from "@/server/db/schema";
+import { deposit, lead, quote, quoteItem } from "@/server/db/schema";
 
 export type ReportStats = Awaited<ReturnType<typeof getReportStats>>;
 
@@ -142,4 +142,52 @@ export async function getReportStats() {
     byMonth,
     salesPerformance,
   };
+}
+
+// ---- Toàn bộ báo giá (cho admin xem tập trung) ----------------------------
+
+export type QuoteReportRow = Awaited<ReturnType<typeof listQuotesForReport>>[number];
+
+export async function listQuotesForReport() {
+  const rows = await db
+    .select({
+      id: quote.id,
+      leadId: quote.leadId,
+      leadName: lead.name,
+      leadPhone: lead.phone,
+      salesName: user.name,
+      total: quote.total,
+      note: quote.note,
+      status: quote.status,
+      createdAt: quote.createdAt,
+    })
+    .from(quote)
+    .innerJoin(lead, eq(quote.leadId, lead.id))
+    .leftJoin(user, eq(lead.assignedSalesId, user.id))
+    .orderBy(desc(quote.createdAt));
+
+  const items = rows.length
+    ? await db
+        .select()
+        .from(quoteItem)
+        .where(
+          inArray(
+            quoteItem.quoteId,
+            rows.map((r) => r.id),
+          ),
+        )
+    : [];
+
+  return rows.map((r) => ({
+    ...r,
+    total: Number(r.total),
+    salesName: r.salesName ?? "Chưa gán",
+    items: items
+      .filter((it) => it.quoteId === r.id)
+      .map((it) => ({
+        name: it.name,
+        quantity: Number(it.quantity),
+        unitPrice: Number(it.unitPrice),
+      })),
+  }));
 }

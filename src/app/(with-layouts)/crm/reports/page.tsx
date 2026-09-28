@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { InvoiceIcon, PieChartIcon, TaskIcon, UserGroupIcon } from "@/components/common/sidebar/icon";
 import { Breadcrumbs } from "@/components/tailgrids/core/breadcrumbs";
 import { formatVnd } from "@/lib/format";
-import { getReportStats } from "@/server/lead/report";
+import { getReportStats, listQuotesForReport } from "@/server/lead/report";
 import { KpiCard } from "./_components/kpi-card";
 import { ProjectsChart } from "./_components/projects-chart";
+import { QuotesTable } from "./_components/quotes-table";
 import { RevenueChart } from "./_components/revenue-chart";
 import { SalesPerformanceTable } from "./_components/sales-performance-table";
 
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CrmReportsPage() {
-  const stats = await getReportStats();
+  const [stats, quotes] = await Promise.all([getReportStats(), listQuotesForReport()]);
 
   return (
     <div className="mt-6 space-y-5">
@@ -68,6 +69,8 @@ export default async function CrmReportsPage() {
         </div>
 
         <SalesPerformanceTable rows={stats.salesPerformance} />
+
+        <QuotesTable rows={quotes} />
       </div>
     </div>
   );
